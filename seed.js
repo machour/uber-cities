@@ -5,23 +5,25 @@ const file = 'src/data/uber.json'
 const fileCabify = 'src/data/cabify.json'
 const fileLyft = 'src/data/lyft.json'
 const fileTaxify = 'src/data/taxify.json'
+const fileEasytaxi = 'src/data/easytaxi.json'
 
 const uber = { cities: [] }
 const cabify = { cities: [] }
 const lyft = { cities: [] }
 const taxify = { cities: [] }
+const easytaxi = { cities: [] }
 
 osmosis
   .get('https://www.uber.com/en-GB/cities/')
   .find('h3 + ul li')
   .set({
     city: 'a',
-    link: 'a@href'
+    link: 'a@href',
   })
   .data(city => {
     uber.cities.push({
       city: city.city,
-      link: city.link
+      link: city.link,
     })
   })
   .error(error => error)
@@ -36,12 +38,12 @@ osmosis
   .find('div.cities ul li')
   .set({
     name: 'a',
-    link: 'a@href'
+    link: 'a@href',
   })
   .data(city => {
     cabify.cities.push({
       name: city.name,
-      link: city.link
+      link: city.link,
     })
   })
   .done(() =>
@@ -55,12 +57,12 @@ osmosis
   .find('.list-unstyled .m-y-s')
   .set({
     name: 'a',
-    link: 'a@href'
+    link: 'a@href',
   })
   .data(city => {
     lyft.cities.push({
       name: city.name,
-      link: city.link
+      link: city.link,
     })
   })
   .done(() =>
@@ -74,16 +76,32 @@ osmosis
   .find('.list-inline li h4')
   .set({
     name: 'a',
-    link: 'a@href'
+    link: 'a@href',
   })
   .data(city => {
     taxify.cities.push({
       name: city.name,
-      link: city.link
+      link: city.link,
     })
   })
   .done(() =>
     jsonfile.writeFile(fileTaxify, taxify, err => {
+      console.error(err)
+    })
+  )
+
+osmosis
+  .get('http://www.easytaxi.com/cities/')
+  .find('#city li')
+  .set('name')
+  .data(city => {
+    easytaxi.cities.push({
+      name: city.name,
+      link: '/cities/#city',
+    })
+  })
+  .done(() =>
+    jsonfile.writeFile(fileEasytaxi, easytaxi, err => {
       console.error(err)
     })
   )
